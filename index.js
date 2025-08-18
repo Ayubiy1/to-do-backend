@@ -6,9 +6,13 @@ const cors = require("cors");
 const boardRoutes = require("./routes/BoardRoute");
 const listRoutes = require("./routes/ListRoute");
 const taskRoutes = require("./routes/TaskRoute");
+const userRoutes = require("./routes/userRoutes");
+const authRoutes = require("./routes/Auth");
+
 const { register, login } = require("./controllers/authController");
 const User = require("./models/User");
 const List = require("./models/List");
+const Board = require("./models/Board"); // ✅ IMPORT QILINDI
 
 dotenv.config();
 
@@ -26,13 +30,13 @@ app.use(
 app.use(express.json());
 
 // Auth routes
-app.post("/api/register", register);
-app.post("/api/login", login);
 
 // API routes
 app.use("/api/boards", boardRoutes);
 app.use("/api/lists", listRoutes);
 app.use("/api/tasks", taskRoutes);
+// app.use("/api/users", authRoutes);
+app.use("/api/users", userRoutes);
 
 // ✅ Users API (barcha foydalanuvchilarni olish)
 app.get("/api/users", async (req, res) => {
@@ -45,18 +49,7 @@ app.get("/api/users", async (req, res) => {
   }
 });
 
-// ✅ Test route
-app.get("/api/boards", (req, res) => {
-  res.json([{ id: 1, name: "Board 1" }]);
-});
-
-// backend (Node.js + Mongoose misol)
-app.get("/api/lists", async (req, res) => {
-  const { board } = req.query;
-  const lists = await List.find(board ? { board } : {});
-  res.json(lists);
-});
-
+// ✅ Listlarni olish (board name bo‘yicha)
 app.get("/api/lists", async (req, res) => {
   try {
     const { boardName } = req.query;
@@ -78,6 +71,7 @@ app.get("/api/lists", async (req, res) => {
 
     res.json(lists);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: error.message });
   }
 });

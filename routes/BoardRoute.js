@@ -1,11 +1,12 @@
 const express = require("express");
 const Board = require("../models/Board");
+const List = require("../models/List");
 const router = express.Router();
 
 // Barcha boardlarni olish
 router.get("/", async (req, res) => {
   try {
-    const boards = await Board.find();
+    const boards = await Board.find().sort({ createdAt: -1 });
     res.json(boards);
   } catch (err) {
     res
@@ -112,6 +113,31 @@ router.delete("/:id", async (req, res) => {
     res
       .status(500)
       .json({ error: "Board o‘chirishda xatolik", details: err.message });
+  }
+});
+
+// GET /api/lists?boardName=Marketing
+router.get("/", async (req, res) => {
+  try {
+    const { boardName } = req.query;
+
+    if (!boardName) {
+      return res.status(400).json({ message: "boardName majburiy" });
+    }
+
+    // Board topish
+    const board = await Board.findOne({ name: boardName });
+    if (!board) {
+      return res.status(404).json({ message: "Board topilmadi" });
+    }
+
+    // Listlarni olish
+    const lists = await List.find({ boardId: board._id }).sort({
+      createdAt: -1,
+    });
+    res.json(lists);
+  } catch (error) {
+    res.status(500).json({ message: "Xatolik", error: error.message });
   }
 });
 
