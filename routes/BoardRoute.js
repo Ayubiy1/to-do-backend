@@ -6,6 +6,15 @@ const router = express.Router();
 // Barcha boardlarni olish
 router.get("/", async (req, res) => {
   try {
+    const boards = await Board.find();
+    res.json(boards);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.get("/", async (req, res) => {
+  try {
     const boards = await Board.find().sort({ createdAt: -1 });
     res.json(boards);
   } catch (err) {

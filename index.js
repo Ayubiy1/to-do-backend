@@ -17,6 +17,7 @@ const Board = require("./models/Board"); // ✅ IMPORT QILINDI
 dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 // ✅ CORS sozlamalari (frontend manzili bilan)
 app.use(
@@ -77,14 +78,31 @@ app.get("/api/lists", async (req, res) => {
 });
 
 // MongoDB ulash va serverni ishga tushirish
+app.listen(PORT, () => {
+  console.log(`🚀 Server ${PORT}-portda ishlamoqda`);
+});
+
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("✅ MongoDB ulandi");
-    app.listen(process.env.PORT, () => {
-      console.log(`🚀 Server ${process.env.PORT}-portda ishlayapti`);
-    });
-  })
-  .catch((err) => {
-    console.error("❌ MongoDB ulanishida xato:", err);
-  });
+  .then(() => console.log("✅ MongoDB ulandi"))
+  .catch((err) => console.error("❌ MongoDB ulanishida xato:", err));
+
+// mongoose
+//   .connect(process.env.MONGO_URI, {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//   })
+//   .then(() => console.log("✅ MongoDB ulandi"))
+//   .catch((err) => console.error("❌ MongoDB ulanishida xato:", err));
+
+// mongoose
+//   .connect(process.env.MONGO_URI)
+//   .then(() => {
+//     console.log("✅ MongoDB ulandi");
+//     app.listen(process.env.PORT, () => {
+//       console.log(`🚀 Server ${process.env.PORT}-portda ishlayapti`);
+//     });
+//   })
+//   .catch((err) => {
+//     console.error("❌ MongoDB ulanishida xato:", err);
+//   });
